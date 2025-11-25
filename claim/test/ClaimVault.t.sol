@@ -105,7 +105,7 @@ contract ClaimVaultTest is Test {
 
         deal(address(token), address(vault), 10_000_000 ether);
 
-        assertEq(address(token), address(vault.ZBT()));
+        assertEq(address(token), address(vault.USDT()));
         assertEq(vault.signer(), signerAddr);
         assertEq(vault.owner(), owner);
         assertEq(vault.epochDuration(), defaultEpochDuration);
@@ -120,7 +120,7 @@ contract ClaimVaultTest is Test {
         uint256 expiry,
         uint256 chainId
     ) internal view returns (bytes memory sig) {
-        bytes32 digest = vault.calculateClaimZBTHash(
+        bytes32 digest = vault.calculateClaimUSDTHash(
             user,
             amount,
             nonce,
@@ -210,7 +210,7 @@ contract ClaimVaultTest is Test {
 
         // Sign with a different private key
         uint256 otherPk = 0xB0B;
-        bytes32 digest = vault.calculateClaimZBTHash(
+        bytes32 digest = vault.calculateClaimUSDTHash(
             user1,
             amount,
             nonce,
@@ -596,5 +596,18 @@ contract ClaimVaultTest is Test {
 
         assertEq(other.balanceOf(address(vault)), 0);
         assertEq(other.balanceOf(owner), 777 ether);
+    }
+
+    function testContractAddress()public{
+        vm.startPrank(0x5D527b23A3144898456868042064e5A610Cd6e86);
+        vault = new ClaimVault(
+            address(token),
+            signerAddr,
+            defaultEpochDuration,
+            defaultGlobalCap,
+            defaultUserCap
+        );
+        console.log(address(vault));
+        vm.stopPrank();
     }
 }

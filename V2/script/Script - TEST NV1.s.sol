@@ -9,7 +9,7 @@ import "../src/WithdrawVault.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract VaultV2NV1 is Script {
-    address owner = address(1);
+    address owner = address(0x221b1D51E539d658F813621Ea62404cf96C60d31);
     address ceffu = owner;
     address bot = owner;
     address airdrop = owner;
@@ -66,7 +66,7 @@ contract VaultV2NV1 is Script {
         zk.setAdmin(owner);
 
         vm.stopBroadcast();
-
+        console.log("mock USDT address", address(token));
         console.log("vault address:", address(vault));
         console.log("withdrawVault address:", address(withdrawVault));
         console.log("vaultV1 address:", address(vaultV1));

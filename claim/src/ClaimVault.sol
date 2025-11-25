@@ -20,7 +20,7 @@ contract ClaimVault is Ownable, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /// @notice ERC20 token managed by this vault.
-    IERC20 public immutable ZBT;
+    IERC20 public immutable USDT;
 
     /// @notice Timestamp when claiming starts; used as the epoch anchor.
     uint256 public immutable startClaimTimestamp;
@@ -109,20 +109,20 @@ contract ClaimVault is Ownable, Pausable, ReentrancyGuard {
 
     /**
      * @notice Initializes the vault.
-     * @param _ZBT Token address to manage.
+     * @param _USDT Token address to manage.
      * @param _signer Off-chain signer that authorizes claims.
      * @param _epochDuration Epoch length (seconds).
      * @param _globalCapPerEpoch Global cap per epoch.
      * @param _userCapPerEpoch Per-user cap per epoch.
      */
     constructor(
-        address _ZBT,
+        address _USDT,
         address _signer,
         uint256 _epochDuration,
         uint256 _globalCapPerEpoch,
         uint256 _userCapPerEpoch
     ) Ownable(msg.sender) {
-        ZBT = IERC20(_ZBT);
+        USDT = IERC20(_USDT);
         signer = _signer;
         startClaimTimestamp = block.timestamp;
         epochDuration = _epochDuration;
@@ -234,7 +234,7 @@ contract ClaimVault is Ownable, Pausable, ReentrancyGuard {
             chainId := chainid()
         }
 
-        bytes32 claimDigestHash = calculateClaimZBTHash(
+        bytes32 claimDigestHash = calculateClaimUSDTHash(
             msg.sender,
             claimAmount,
             currentUserNonce,
@@ -273,7 +273,7 @@ contract ClaimVault is Ownable, Pausable, ReentrancyGuard {
                 claimAmount;
         }
 
-        ZBT.safeTransfer(msg.sender, claimAmount);
+        USDT.safeTransfer(msg.sender, claimAmount);
         emit Claimed(
             msg.sender,
             claimAmount,
@@ -301,14 +301,14 @@ contract ClaimVault is Ownable, Pausable, ReentrancyGuard {
      * @param _expiry Expiry timestamp.
      * @return digest 32-byte message hash to be signed/verified.
      */
-    function calculateClaimZBTHash(
+    function calculateClaimUSDTHash(
         address _user,
         uint256 _claimAmount,
         uint256 _userNonce,
         uint256 _chainid,
         uint256 _expiry
     ) public view returns (bytes32) {
-        bytes32 userClaimZBTStructHash = keccak256(
+        bytes32 userClaimUSDTStructHash = keccak256(
             abi.encode(
                 _user,
                 _claimAmount,
@@ -318,7 +318,7 @@ contract ClaimVault is Ownable, Pausable, ReentrancyGuard {
                 address(this)
             )
         );
-        return MessageHashUtils.toEthSignedMessageHash(userClaimZBTStructHash);
+        return MessageHashUtils.toEthSignedMessageHash(userClaimUSDTStructHash);
     }
 
     /**
